@@ -1,23 +1,16 @@
 %{
-int yyparse(void);
-int yylex(void);
-void yyerror(const char *);
-int scope[100]={0},stop=1,sid=1, elno=1;
-char *indentifier;
-#include<string.h>
-#include"stbls.h"
-#include"y.tab.h"
-void yyerror(const char *a){printf("\nError in line %d, %s\n", elno,a);return;}
-void addTokenToFile(const char *t, const char *s);
-int main(int argc, char *argv[]){
+	int yyparse(void);
+	int yylex(void);
+	int yywrap(void);
+	void yyerror(const char *);
+	void addTokenToFile(const char *t, const char *s);
 	
-	if(argc == 2){
-		yyin = fopen(argv[1],"r");
-	}
-	yyparse();
-	printall();
-	return 0;
-}
+	int scope[100]={0},stop=1,sid=1, elno=1;
+
+	char *indentifier;
+	#include<string.h>
+	#include"stbls.h"
+	#include"y.tab.h"
 
 %}
 
@@ -60,7 +53,6 @@ break|case|catch|continue|debugger|default|delete|do|else|finally|for|function|i
 
 %%
 
-
 void addTokenToFile(const char *t, const char *s){
 
 	FILE *fptr;
@@ -80,4 +72,23 @@ void addTokenToFile(const char *t, const char *s){
 	fprintf(fptr,"%s : %s\n", t, s);
 	fclose(fptr);
 }
+
+void yyerror(const char *a){
+		printf("\nError in line %d, %s\n", elno,a);
+	}
+
+int yywrap(void){
+	return 1;
+}
+int main(int argc, char *argv[]){
+	
+	if(argc == 2){
+		yyin = fopen(argv[1],"r");
+	}
+	yyparse();
+	printall();
+	return 0;
+}
+
+
 

@@ -51,7 +51,7 @@ ifelse: T_ELSE statement;
 %%
 
 
-int yywrap(){return 1;}
+
 
 
 

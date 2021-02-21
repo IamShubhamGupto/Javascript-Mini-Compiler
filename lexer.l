@@ -1,14 +1,14 @@
 %{
 int yyparse(void);
 int yylex(void);
-void yyerror(char *);
+void yyerror(const char *);
 int scope[100]={0},stop=1,sid=1, elno=1;
 char *indentifier;
 #include<string.h>
 #include"stbls.h"
 #include"y.tab.h"
-void yyerror(char *a){printf("\nError in line %d, %s\n", elno,a);return;}
-void addTokenToFile(char *t, char *s);
+void yyerror(const char *a){printf("\nError in line %d, %s\n", elno,a);return;}
+void addTokenToFile(const char *t, const char *s);
 int main(int argc, char *argv[]){
 	
 	if(argc == 2){
@@ -61,17 +61,23 @@ break|case|catch|continue|debugger|default|delete|do|else|finally|for|function|i
 %%
 
 
-void addTokenToFile(char *t, char *s){
-   	FILE *fptr;
-   	
-   	fptr = fopen("tokens.txt", "a");
-   	if(fptr == NULL)
-   	{
-      printf("Error!");
-      exit(1);
-   	}
+void addTokenToFile(const char *t, const char *s){
 
-   	fprintf(fptr,"%s : %s\n", t, s);
-   	fclose(fptr);
+	FILE *fptr;
+	fptr = fopen("tokens.txt", "a");
+	if(fptr == NULL){
+		printf("Error!");
+		exit(1);
+   	}
+	#if 1
+	if(strlen(s) == 1){
+		fprintf(fptr,"ASCII value of %s : %d\n", s,s[0]);
+	}
+	#endif
+	#if 0
+	printf("+++++++ %s %d ++++++\n",t,strlen(s));
+	#endif
+	fprintf(fptr,"%s : %s\n", t, s);
+	fclose(fptr);
 }
 

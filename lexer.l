@@ -61,15 +61,16 @@ void addTokenToFile(const char *t, const char *s){
 		printf("Error!");
 		exit(1);
    	}
+	
+	#if 0
+	printf("+++++++ %s %d ++++++\n",t,strlen(s));
+	#endif
+	fprintf(fptr,"%s : %s\n", t, s);
 	#if 1
 	if(strlen(s) == 1){
 		fprintf(fptr,"ASCII value of %s : %d\n", s,s[0]);
 	}
 	#endif
-	#if 0
-	printf("+++++++ %s %d ++++++\n",t,strlen(s));
-	#endif
-	fprintf(fptr,"%s : %s\n", t, s);
 	fclose(fptr);
 }
 

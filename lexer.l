@@ -7,7 +7,7 @@
 	
 	int scope[100]={0},stop=1,sid=1, elno=1;
 
-	char *indentifier;
+	char *identifier;
 	#include<string.h>
 	#include"stbls.h"
 	#include"y.tab.h"
@@ -29,7 +29,7 @@ while					{addTokenToFile("Keyword",yytext);return T_WHILE;}
 console.log			{addTokenToFile("Print", yytext);return T_CONSOLE;}
 document.write		{addTokenToFile("Print", yytext);return T_DOCUMENT;}
 break|case|catch|continue|debugger|default|delete|do|else|finally|for|function|if|in|instanceof|new|return|switch|this|throw|try|typeof|var|void|with|while				{addTokenToFile("Keyword", yytext);return T_KEY;}
-([a-zA-Z]|\_)([a-zA-Z0-9]|\_)* 		{indentifier=strdup(yytext);addTokenToFile("Identifer", yytext);return T_ID;}
+([a-zA-Z]|\_)([a-zA-Z0-9]|\_)* 		{identifier=strdup(yytext);addTokenToFile("Identifer", yytext);return T_ID;}
 [0-9]+(\.[0-9]+)?(E[-+]?[0-9]+)? 	{mkentr(2,yytext,0);addTokenToFile("Number", yytext);return T_NUM;}
 
 [\[\(\{]			{addTokenToFile("Open Brackets", yytext); return yytext[0];}

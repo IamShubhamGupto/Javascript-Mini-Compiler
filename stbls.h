@@ -32,10 +32,10 @@ void printall(){
 	struct tentr *a;
 	printf("\n\nidentifiers:\n");
 	a=&idtopp;
-	printf("Name \t scope \t type \t declared line \t last used line\n");
+	printf("Name \t scope \t declared line \t last used line\n");
 	printf("--------------------------------------------------------\n");
 	while(a->n!=NULL){
-		printf("%s \t %d \t %d \t %d \t\t %d\n",a->n->d,a->n->scope,a->n->type,a->n->lndec,a->n->lnused);
+		printf("%s \t %d \t %d \t\t %d\n",a->n->d,a->n->scope,a->n->lndec,a->n->lnused);
 		a=a->n;
 		}
 	printf("\n\nstrings:\n");

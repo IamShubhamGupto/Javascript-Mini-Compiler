@@ -18,9 +18,9 @@ terminator: ';' | '\n';
 
 statement: declare terminator|expr terminator|for |while |if | '{'{scope[stop++]=sid++;} seqOfStmts '}' {stop--;} | T_CONSOLE '(' expr ')'| T_DOCUMENT '(' T_STR ')' ;
 
-id: T_ID {mkentr(0,indentifier,scope[stop-1]);printf("updating :%s scope:%d\n",indentifier,scope[stop-1]);};
+id: T_ID {mkentr(0,identifier,scope[stop-1]);printf("updating symbol table : %s scope:%d\n",identifier,scope[stop-1]);};
 
-idV: T_ID {chkentr(indentifier);printf("checking :%s scope:%d\n",indentifier,scope[stop-1]);};
+idV: T_ID {chkentr(identifier);printf("checking symbol table : %s scope:%d\n",identifier,scope[stop-1]);};
 
 assign: '=' | T_SHA;
 
@@ -28,7 +28,7 @@ expr: id assign expr | value | ;
 
 value: unit anyOperator value |unit;
 
-unit: idV | T_OP4 idV | idV T_OP4 | T_STR {add_type_name(indentifier, 1);}| T_NUM {add_type_name(indentifier, 0);}| '(' list ')'| func | '[' list ']';
+unit: idV | T_OP4 idV | idV T_OP4 | T_STR {add_type_name(identifier, 1);}| T_NUM {add_type_name(identifier, 0);}| '(' list ')'| func | '[' list ']';
 
 func: idV '(' list ')';
 

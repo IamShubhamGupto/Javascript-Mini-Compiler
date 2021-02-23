@@ -24,3 +24,4 @@ if (a <= b){
 if (a === b){
 	console.log("Type and Value are equal");
 }
+

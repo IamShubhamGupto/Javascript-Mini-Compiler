@@ -2,7 +2,7 @@
 #include "lex.yy.c"	
 %}
 
-%token T_VAR T_DEF T_KEY T_ID T_NUM T_LBR T_RBR T_STR T_SHA T_LCG T_LOP T_OP1 T_OP2 T_OP3 T_OP4 T_WHILE T_FOR T_IF T_ELSE T_IN T_LET T_CONSOLE T_DOCUMENT
+%token T_VAR T_DEF T_KEY T_ID T_NUM T_LBR T_RBR T_STR T_SHA T_LCG T_LOP T_OP1 T_OP2 T_OP3 T_OP4 T_WHILE T_IF T_ELSE T_IN T_LET T_CONSOLE T_DOCUMENT
 %start start
 
 %%
@@ -16,7 +16,7 @@ terminator: ';' | '\n';
 
 
 
-statement: declare terminator|expr terminator|for |while |if | '{'{scope[stop++]=sid++;} seqOfStmts '}' {stop--;} | T_CONSOLE '(' expr ')'| T_DOCUMENT '(' T_STR ')' ;
+statement: declare terminator|expr terminator|while |if | '{'{scope[stop++]=sid++;} seqOfStmts '}' {stop--;} | T_CONSOLE '(' expr ')'| T_DOCUMENT '(' T_STR ')'| error ;
 
 id: T_ID {mkentr(0,identifier,scope[stop-1]);printf("updating symbol table : %s scope:%d\n",identifier,scope[stop-1]);};
 
@@ -28,19 +28,13 @@ expr: id assign expr | value | ;
 
 value: unit anyOperator value |unit;
 
-unit: idV | T_OP4 idV | idV T_OP4 | T_STR {add_type_name(identifier, 1);}| T_NUM {add_type_name(identifier, 0);}| '(' list ')'| func | '[' list ']';
-
-func: idV '(' list ')';
+unit: idV | T_OP4 idV | idV T_OP4 | T_STR {add_type_name(identifier, 1);}| T_NUM {add_type_name(identifier, 0);}| '(' list ')' | '[' list ']';
 
 list: expr ',' list | expr;
 
 declare: T_VAR mulDecl | T_LET mulDecl;
 
 mulDecl: id |id ',' mulDecl|id '=' expr|id '=' expr ',' mulDecl;
-
-varOperator: T_VAR | T_LET | ;
-
-for: T_FOR '(' varOperator list ';' list ';' list ')' statement;
 
 while: T_WHILE '(' expr ')' statement;
 

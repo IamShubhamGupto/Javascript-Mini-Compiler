@@ -2,4 +2,4 @@
 lex lexer.l
 yacc -d parser.y
 gcc y.tab.c
-./a.out < input1.txt
+./a.out < input4.js

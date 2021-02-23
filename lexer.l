@@ -24,7 +24,6 @@ if					{addTokenToFile("Keyword",yytext);return T_IF; }
 else				{addTokenToFile("Keyword",yytext);return T_ELSE;}
 in					{addTokenToFile("Keyword",yytext);return T_IN;}
 let					{addTokenToFile("Keyword",yytext);return T_LET;}
-for					{addTokenToFile("Keyword",yytext);return T_FOR;}
 while					{addTokenToFile("Keyword",yytext);return T_WHILE;}
 console.log			{addTokenToFile("Print", yytext);return T_CONSOLE;}
 document.write		{addTokenToFile("Print", yytext);return T_DOCUMENT;}

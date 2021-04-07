@@ -1,0 +1,49 @@
+mov t0 10
+mov length t0
+mov t1 5
+mov n t1
+mov t2 0
+mov sum t2
+mov t3 length
+mov t4 20
+t5 = t3 == t4
+iftrue t5 goto l0
+goto l1
+label l0
+mov t6 0
+mov i t6
+label l3
+mov t7 i
+mov t8 n
+t9 = t7 < t8
+iffalse t9 goto l4
+mov t13 sum
+mov t14 length
+t15 = t13 + t14
+mov sum t15
+mov t10 i
+mov t11 1
+t12 = t10 + t11
+mov i t12
+goto l3
+label l4
+goto l2
+label l1
+mov t16 0
+mov i t16
+label l5
+mov t17 i
+mov t18 n
+t19 = t17 < t18
+iffalse t19 goto l6
+mov t23 sum
+mov t24 length
+t25 = t23 - t24
+mov sum t25
+mov t20 i
+mov t21 1
+t22 = t20 + t21
+mov i t22
+goto l5
+label l6
+label l2

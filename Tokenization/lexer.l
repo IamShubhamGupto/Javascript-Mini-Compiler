@@ -5,15 +5,19 @@
 	void yyerror(const char *);
 	void addTokenToFile(const char *t, const char *s);
 	
-	int scope[100]={0},stop=1,sid=1, elno=1;
+	int scope[100]={0};
+	int stop=1;
+	int sid=1;
+	int elno=1;
 
 	char *identifier;
-	#include<string.h>
-	#include"stbls.h"
-	#include"y.tab.h"
+	#include <string.h>
+	#include "header.h"
+	#include "y.tab.h"
 
 %}
-
+%option nounput
+%option noinput
 %%
 
 \/\*([^*]|\*[^/])*\*\/			;
@@ -89,6 +93,3 @@ int main(int argc, char *argv[]){
 	printall();
 	return 0;
 }
-
-
-

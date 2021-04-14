@@ -1,21 +1,34 @@
+#ifndef HEADER_H
+#define HEADER_H
+#define DEBUG 0
 struct tentr{
-	int type,scope,lndec,lnused;
+	int type;
+	int scope;
+	int lndec;
+	int lnused;
 	struct tentr *n;
 	char *d;
 };
 
-struct tentr idtopp={0},stopp={0},ntopp={0};
+struct tentr idtopp={0};
+struct tentr stopp={0};
+struct tentr ntopp={0};
 
 int mkentr(int type,char *d,int scp)
 {
-	struct tentr *a,*b;int c=0;
+	struct tentr *a;
+	struct tentr *b;
+	int c=0;
 	switch(type){
-		case 0:a=&idtopp;
-				break;
-		case 1:a=&stopp;
-				break;
-		case 2:a=&ntopp;
-				break;
+		case 0:
+			a=&idtopp;
+			break;
+		case 1:
+			a=&stopp;
+			break;
+		case 2:
+			a=&ntopp;
+			break;
 		default:return -1;
 	}
 	while(a->n!=NULL){
@@ -61,30 +74,46 @@ void printall(){
 }
 
 
-int chkentr(char *d)
+int chkentr(const char *d)
 {
-	int tp=stop-1,pscp;
-	//printf("chkentr called!!!\n");
-	struct tentr *a;int c=0;
-	for(tp=stop-1;tp>=0;tp--){
-			pscp=scs[0];a=&idtopp;
-			while(a->n!=NULL){
-				if(strcmp(d,a->n->d)==0&&(pscp==a->n->scope||1)){
-					a->n->lnused=elno;return c;}a=a->n;c++;
-				}
+	int tp=stop-1;
+	int pscp;
+	if(DEBUG)
+	{
+		printf("chkentr called!!!\n");
+	}
+	
+	struct tentr *a;
+	int c=0;
+	for(tp=stop-1;tp>=0;tp--)
+	{
+		pscp=scs[0];a=&idtopp;
+		while(a->n!=NULL)
+		{
+			if(strcmp(d,a->n->d)==0 && (pscp==a->n->scope||1))
+			{
+				a->n->lnused = elno;
+				return c;
+			}
+			a=a->n;c++;
 		}
+	}
 		
 	printf("Error in line %d, %s not found\n", elno,d);
-	//printf("chkentr exited\n");
+	if(DEBUG)
+	{
+		printf("chkentr exited\n");
+	}
 	return -1;
 }
 
-void add_type_name(char *d, int type)
+void add_type_name(const char *d, int type)
 {
 	int tp=stop-1,pscp;
 	struct tentr *a;
 	for(tp=stop-1;tp>=0;tp--){
-		pscp=scs[tp];a=&idtopp;
+		pscp=scs[tp];
+		a=&idtopp;
 		while(a->n!=NULL){
 			if(strcmp(d,a->n->d)==0&&pscp==a->n->scope){
 				a->n->type=type;return;}a=a->n;
@@ -96,25 +125,34 @@ void add_type_name(char *d, int type)
 
 //more string functions
 
-char *ap(char *a,char *b)
+char *ap(const char *a, const char *b)
 {
-	char *o;int m,n;m=strlen(a);n=strlen(b);
-	o=malloc(sizeof(char)*(m+n+10));
-	strcpy(o,a);strcpy(o+m,b);return o;
+	int n = strlen(b);
+	int m = strlen(a);
+	char *o = malloc(sizeof(char)*(m+n+10));
+	strcpy(o,a);
+	strcpy(o+m,b);
+	return o;
 }
 
-char *ap3(char *a,char *b,char *c)
+char *ap3(const char *a, const char *b, const char *c)
 {
-	char *o;int m,n,p;m=strlen(a);n=strlen(b);p=strlen(c);
-	o=malloc(sizeof(char)*(m+n+p+10));
-	strcpy(o,a);strcpy(o+m,b);strcpy(o+m+n,c);return o;
+	int m = strlen(a);
+	int n = strlen(b);
+	int p = strlen(c);
+	char *o = malloc(sizeof(char)*(m+n+p+10));
+	strcpy(o,a);
+	strcpy(o+m,b);
+	strcpy(o+m+n,c);
+	return o;
 }
 
 char *getname(int c)
 {
-	struct tentr *t;int i;
-	t=idtopp.n;
-	for(i=0;i<c;i++)t=t->n;
+	struct tentr *t =idtopp.n;
+	int i;
+	for(i=0; i<c; i++)
+		t=t->n;
 	return t->d;
 }
 
@@ -122,3 +160,4 @@ char *getsname(int s)
 {
 	return "<sign>";
 }
+#endif

@@ -1,21 +1,37 @@
+#ifndef HEADER_H
+#define HEADER_H
+#define DEBUG 0
 struct tentr{
-	int type,scope,lndec,lnused;
+	int type;
+	int scope;
+	int lndec;
+	int lnused;
 	struct tentr *n;
 	char *d;
 };
 
-struct tentr idtopp={0},stopp={0},ntopp={0};
+struct tentr idtopp={0};
+struct tentr stopp={0};
+struct tentr ntopp={0};
 
 void mkentr(int type,char *d,int scp){
-	struct tentr *a,*b;
+	struct tentr *a;
+	struct tentr *b;
 	switch(type){
-	case 0:a=&idtopp;break;
-	case 1:a=&stopp;break;
-	case 2:a=&ntopp;break;
-	default:return;
+		case 0: 
+			a = &idtopp;
+			break;
+		case 1: 
+			a = &stopp;
+			break;
+		case 2: 
+			a = &ntopp;
+			break;
+		default:return;
 	}
 	while(a->n!=NULL){
-		if(strcmp(a->n->d,d)==0)return;
+		if(strcmp(a->n->d,d)==0)
+			return;
 		a=a->n;
 	}
 	b=malloc(sizeof(struct tentr));
@@ -54,8 +70,11 @@ void printall(){
 }
 
 void chkentr(char *d){
-	int tp=stop-1,pscp;
-	//printf("chkentr called!!!\n");
+	int tp=stop-1;
+	int pscp;
+	if(DEBUG){
+		printf("chkentr called!!!\n");
+	}
 	struct tentr *a;
 	for(tp=stop-1;tp>=0;tp--){
 		pscp=scope[tp];
@@ -68,11 +87,15 @@ void chkentr(char *d){
 			a=a->n;
 		}
 	}
+	if(DEBUG){
+		printf("chkentr exited\n");
+	}
 	printf("Error in line %d, %s not found\n", elno,d);
 }
 
 void add_type_name(char *d, int type){
-	int tp=stop-1,pscp;
+	int tp=stop-1;
+	int pscp;
 	struct tentr *a;
 	for(tp=stop-1;tp>=0;tp--){
 		pscp=scope[tp];
@@ -87,3 +110,4 @@ void add_type_name(char *d, int type){
 	}
 	printf("Error in line %d, %s not found\n", elno,d);
 }
+#endif 

@@ -1,26 +1,28 @@
 %{
-	#include "y.tab.h"
+	
 	int yyparse(void);
 	int yylex(void);
-	void yyerror(char *);
-	int scs[100]={0},stop=1,sid=1, elno=1,lbl=0,tmp=0;
-	char *ygbl,bbuf[1000],ysign[10];
+	int yywrap(void);
+	void yyerror(const char *);
+	void addTokenToFile(const char *t, const char *s);
+	int scs[100]={0};
+	int stop=1;
+	int sid=1;
+	int elno=1;
+	int lbl=0;
+	int tmp=0;
+	char *ygbl;
+	char bbuf[1000];
+	char ysign[10];
 
-	#include<string.h>
-	#include"header.h"
-	#include"y.tab.c"
-
-	void yyerror(char *a){printf("\nError in line %d, %s\n", elno,a);return;}
-	int main(){
-		yyparse();
-		//printall();
-		return 0;
-	}
-
+	#include <string.h>
+	#include "header.h"
+	#include "y.tab.c"
+	#include "y.tab.h"
 %}
-
+%option nounput
+%option noinput
 %%
-
 \/\*([^*]|\*[^/])*\*\/			;
 \/\/[^\n]*						;
 var 				{return T_VAR;}
@@ -55,4 +57,42 @@ break|case|catch|continue|debugger|default|delete|do|else|finally|for|function|i
 
 %%
 
+void addTokenToFile(const char *t, const char *s){
+
+	FILE *fptr;
+	fptr = fopen("tokens.txt", "a");
+	if(fptr == NULL){
+		printf("Error!");
+		exit(1);
+   	}
+	
+	#if 0
+	printf("+++++++ %s %d ++++++\n",t,strlen(s));
+	#endif
+	fprintf(fptr,"%s : %s\n", t, s);
+	#if 1
+	if(strlen(s) == 1){
+		fprintf(fptr,"ASCII value of %s : %d\n", s,s[0]);
+	}
+	#endif
+	fclose(fptr);
+}
+
+void yyerror(const char *a)
+{
+	printf("\nError in line %d, %s\n", elno,a);
+	return;
+}
+int yywrap(void){
+	return 1;
+}
+int main(int argc, char *argv[]){
+	
+	if(argc == 2){
+		yyin = fopen(argv[1],"r");
+	}
+	yyparse();
+	// printall();
+	return 0;
+}
 //printf("*************\n************\nafter %d line , symbol table is\n", elno-1);printall();

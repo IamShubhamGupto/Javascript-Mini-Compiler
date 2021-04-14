@@ -138,7 +138,7 @@ vtail:lhs |lhs ',' vtail|lhs '=' expr|lhs '=' expr ',' vtail;
 varop:T_VAR|T_LET|;
 
 for: T_FOR edt {$2.dt[0]=lbl++;$2.dt[1]=lbl++;} 
-	'(' expr ';' expr ';' expr ')' statement {char *a,*b,*c;
+	'(' expr ';' expr ';' expr ')' statement {char *a,*b;
 	sprintf(bbuf,"label l%d\n",$2.dt[0]);
 	a=ap3($5.code,strdup(bbuf),$7.code);
 	sprintf(bbuf,"iffalse t%d goto l%d\n",$7.idn,$2.dt[1]);
@@ -154,7 +154,7 @@ for: T_FOR edt {$2.dt[0]=lbl++;$2.dt[1]=lbl++;}
 if : T_IF '('expr')' edt 
 	{$5.dt[0]=lbl++;$5.dt[1]=lbl++;$5.dt[2]=lbl++;}
 	statement T_ELSE statement 
-	{char *a,*b,*c;
+	{char *a,*b;
 	sprintf(bbuf,"iftrue t%d goto l%d\ngoto l%d\nlabel l%d\n",$3.idn,$5.dt[0],$5.dt[1],$5.dt[0]);
 	a=ap3($3.code,strdup(bbuf),$7.code);
 	sprintf(bbuf,"goto l%d\nlabel l%d\n",$5.dt[2],$5.dt[1]);

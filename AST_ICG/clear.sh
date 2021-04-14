@@ -1,6 +1,6 @@
 #!/bin/bash
 rm *.out
 rm lex.yy.c
-rm tokens.txt
+rm icg.txt
 rm y.tab.c
 rm y.tab.h

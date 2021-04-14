@@ -3,7 +3,7 @@ RM=rm
 # compiler: lex.yy.c header.h
 # 	$(CC) lex.yy.c -ll -ly -o asticg
 compiler: lex.yy.c header.h
-	$(CC) lex.yy.c -ll -o asticg
+	$(CC) lex.yy.c -ll 
 
 lex.yy.c: y.tab.c lex.l
 	lex lex.l

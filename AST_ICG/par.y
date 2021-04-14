@@ -27,9 +27,9 @@ start:seq{FILE *f;f=fopen("icg.txt","w");
 	printf("\n\nast generated:\n\n%s\n\ncode generated:\n\n%s",$1.ast,$1.code);
 	fprintf(f,"%s",$1.code);
 	fclose(f);};
-estt:;
-elb:;
-edt:;
+estt: ;
+elb: ;
+edt: ;
 
 anyopl:T_LOP {$$.code=strdup(ysign);}|T_OP1 {$$.code=strdup(ysign);}|T_LCG {$$.code=strdup(ysign);};
 
@@ -37,16 +37,55 @@ anyoph:T_OP2 {$$.code=strdup(ysign);}|T_OP3 {$$.code=strdup(ysign);};
 
 adlm:';'|'\n';
 
-seq:statement seq{$$.code=ap($1.code,$2.code);$$.ast=ap3($1.ast,strdup("\n"),$2.ast);}|
-	{$$.code=strdup("");$$.ast=strdup("");};
+seq:
+	statement seq
+		{
+			$$.code = ap($1.code,$2.code);
+			$$.ast = ap3($1.ast,strdup("\n"),$2.ast);
+		}
+		|
+		{
+			$$.code=strdup("");$$.ast=strdup("");
+		};
 
-statement:defn adlm {$$.code=$1.code;$$.ast=$1.ast;}|
-	expr adlm {$$.code=$1.code;$$.ast=$1.ast;}|
-	for {$$.code=$1.code;$$.ast=$1.ast;}|
-	if {$$.code=$1.code;$$.ast=$1.ast;}|
-	'{'{scs[stop++]=sid++;} seq '}' {stop--;} adlm  
-	{$$.code=$3.code;$$.ast=ap3(strdup("{"),$3.ast,strdup("} "));}|
-	adlm {$$.code=strdup("");$$.ast=strdup("");};
+statement:
+	defn adlm 
+	{
+		$$.code=$1.code;
+		$$.ast=$1.ast;
+	}
+	|
+	expr adlm 
+	{
+		$$.code=$1.code;
+		$$.ast=$1.ast;
+	}
+	|
+	for 
+	{
+		$$.code=$1.code;
+		$$.ast=$1.ast;
+	}
+	|
+	if 
+	{
+		$$.code=$1.code;
+		$$.ast=$1.ast;
+	}
+	|
+	'{'
+	{scs[stop++]=sid++;} seq '}' {stop--;}
+	adlm  
+	{
+		$$.code=$3.code;
+		$$.ast=ap3(strdup("{"),$3.ast,strdup("} "));
+	}
+	|
+	adlm 
+	{
+		$$.code=strdup("");
+		$$.ast=strdup("");
+	};
 
 lhs:T_ID {int v=mkentr(0,ygbl,scs[stop-1]);$$.dt[0]=v;};
 

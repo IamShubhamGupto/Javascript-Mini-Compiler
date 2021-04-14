@@ -125,7 +125,7 @@ void add_type_name(const char *d, int type)
 
 //more string functions
 
-char *ap(const char *a, const char *b)
+char* ap(const char *a, const char *b)
 {
 	int n = strlen(b);
 	int m = strlen(a);
@@ -135,7 +135,7 @@ char *ap(const char *a, const char *b)
 	return o;
 }
 
-char *ap3(const char *a, const char *b, const char *c)
+char* ap3(const char *a, const char *b, const char *c)
 {
 	int m = strlen(a);
 	int n = strlen(b);
@@ -147,7 +147,7 @@ char *ap3(const char *a, const char *b, const char *c)
 	return o;
 }
 
-char *getname(int c)
+char* getname(int c)
 {
 	struct tentr *t =idtopp.n;
 	int i;
@@ -156,7 +156,7 @@ char *getname(int c)
 	return t->d;
 }
 
-char *getsname(int s)
+char* getsname(int s)
 {
 	return "<sign>";
 }

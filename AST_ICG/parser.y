@@ -29,12 +29,13 @@
 }
 
 %type<stt> seq statement for if while
-%type<eq> expr unit defn anyopl anyoph rhsl rhsh
+%type<eq> expr unit defn anyopl anyoph rhsl rhsh 
 %type<ls> list
 %type<dt> lhs lhsv edt
 %token T_VAR T_DEF T_KEY T_ID T_NUM T_LBR T_RBR T_STR T_SHA T_LCG T_LOP T_OP1 T_OP2 T_OP3 T_OP4 T_FOR T_WHILE T_IF T_ELSE T_IN T_LET
 %start start
-
+%left '+' '-'
+%left '*' '/'
 %%
 start:
 	seq
@@ -160,7 +161,7 @@ lhsv:T_ID
 
 eqb:'='|T_SHA;
 
-expr: lhs eqb expr 
+expr:lhs eqb expr
 {
 	char *a;
 	sprintf(bbuf,"\t%s = t%d;\n",a=getname($1.dt[0]),$3.idn);
@@ -174,7 +175,10 @@ rhsl {
 	$$.code=$1.code;
 	$$.idn=$1.idn;
 	$$.ast=$1.ast;
-};
+}
+;
+
+
 
 rhsl:rhsh anyopl rhsl 
 {

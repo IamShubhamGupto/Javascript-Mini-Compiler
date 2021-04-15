@@ -21,17 +21,17 @@
 		int dt[4];
 		} dt;
 	struct {
-		int idn;
-		int off;
 		char* code;
 		char* ast;
+		int idn;
+		int off;
 	} ls;
 }
 
-%type<stt> estt seq statement for if while
+%type<stt> seq statement for if while
 %type<eq> expr unit defn anyopl anyoph rhsl rhsh
 %type<ls> list
-%type<dt> elb lhs lhsv edt
+%type<dt> lhs lhsv edt
 %token T_VAR T_DEF T_KEY T_ID T_NUM T_LBR T_RBR T_STR T_SHA T_LCG T_LOP T_OP1 T_OP2 T_OP3 T_OP4 T_FOR T_WHILE T_IF T_ELSE T_IN T_LET
 %start start
 
@@ -44,8 +44,7 @@ start:
 		fprintf(f,"%s",$1.code);
 		fclose(f);
 	};
-estt: ;
-elb: ;
+
 edt: ;
 
 anyopl:T_LOP 
@@ -298,6 +297,25 @@ for: T_FOR edt
 	a=ap3(a,$9.ast,strdup(")"));
 	$$.ast=ap(a,$11.ast);
 };
+while: T_WHILE edt
+{
+	$2.dt[0]=lbl++;
+	$2.dt[1]=lbl++;
+}
+'(' expr ')' statement
+{
+	//fixed maybe
+	char* a;
+	char* b;
+	sprintf(bbuf,"label l%d\n",$2.dt[0]);
+	a=ap(strdup(bbuf),$5.code);
+	sprintf(bbuf,"iffalse t%d goto l%d\n",$5.idn,$2.dt[1]);
+	b=ap(strdup(bbuf),$7.code);
+	sprintf(bbuf,"goto l%d\nlabel l%d\n",$2.dt[0],$2.dt[1]);
+	$$.code=ap3(a,b,strdup(bbuf));
+	a=ap3(strdup("while ("),$5.ast,strdup(")"));
+	$$.ast=ap(a,$7.ast);
+};
 
 if : T_IF '('expr')' edt 
 {
@@ -320,8 +338,5 @@ statement T_ELSE statement
 	$$.ast=ap(a,$9.ast);
 };
 
-while: T_WHILE '(' expr ')' 
-{
-// incomplete
-};
+
 %%

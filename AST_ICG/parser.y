@@ -2,7 +2,13 @@
 	#include <stdio.h>	
 	#include <string.h>
 	#include <stdlib.h>
+	#define DEBUG_1 1
 	int yylex();
+	char op[100][4];
+	char arg1[100][16];
+	char arg2[100][16];
+	char res[100][16];
+	int lines = 0;
 %}
 
 %union
@@ -44,6 +50,16 @@ start:
 		printf("\n\nast generated:\n\n%s\n\ncode generated:\n\n%s", $1.ast,$1.code);
 		fprintf(f,"%s",$1.code);
 		fclose(f);
+		// generate_quads($1.code);
+		FILE *f2=fopen("quads.txt","w");
+		printf("\n\nQuadruples\n\n");
+		printf("op\t\targ1\t\targ2\t\tres\n");
+
+		for(int i = 0; i < lines; ++i){
+			printf("%s\t%s\t%s\t%s\n",op[i],arg1[i],arg2[i],res[i]);
+			fprintf(f,"%s\t%s\t%s\t%s\n",op[i],arg1[i],arg2[i],res[i]);
+		}
+		fclose(f2);
 	};
 
 edt: ;
@@ -164,7 +180,19 @@ eqb:'='|T_SHA;
 expr:lhs eqb expr
 {
 	char *a;
-	sprintf(bbuf,"\t%s = t%d;\n",a=getname($1.dt[0]),$3.idn);
+	a=getname($1.dt[0]);
+	//printf("A ====== %s\n",a);
+	sprintf(bbuf,"\t%s = t%d;\n",a ,$3.idn);
+	if(DEBUG_1){
+		printf("reached here");
+	}
+	strcpy(op[lines], strdup("="));
+	char buffer[16];
+	sprintf(buffer, "t%d",$3.idn);
+	strcpy(arg1[lines], buffer);
+	strcpy(arg2[lines], strdup(" "));
+	strcpy(res[lines], strdup(a));
+	++lines;
 	$$.code=ap($3.code,strdup(bbuf));
 	$$.idn=$3.idn;
 	sprintf(bbuf,"\t%s = (",a);

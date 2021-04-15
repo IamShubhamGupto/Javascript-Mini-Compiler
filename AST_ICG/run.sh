@@ -1,7 +1,7 @@
 #!/bin/bash
 lex lexer.l
 yacc -d parser.y
-gcc lex.yy.c -ll -Wall
+gcc -g lex.yy.c -ll -Wall
 FILE=a.out
 
 if test -f "$FILE"; then

@@ -160,4 +160,51 @@ char* getsname(int s)
 {
 	return "<sign>";
 }
+
+// void generate_quads(const char* tac_code){
+
+// 	char ignore[] = {'\t', ' ', '\n', ';', ':'};
+// 	char* op;
+// 	char* arg1;
+// 	char* arg2;
+// 	char* res;
+// 	int lines = 0;
+
+// 	int len = strlen(tac_code);
+// 	if(DEBUG){
+// 		printf("Length of code = %d\n",len);
+// 	}
+	
+// 	int i = 0;
+// 	int j = 0;
+// 	int first = 0;
+// 	int last = 0;
+// 	int flag = 0;
+// 	for(i = 0; i < len; ++i){
+// 		first = i;
+// 		flag = 0;
+// 		for(j = 0; < 5; ++j){
+// 			if(tac_code[i] == ignore[j]){
+// 				flag = 1;
+// 				break;
+// 			}
+// 		}
+// 		if(!flag){
+
+// 		}
+// 	}
+// 	// while(i < len){
+// 	// 	if(tac_code[i] == '\n'){
+// 	// 		++lines;
+// 	// 	}
+// 	// 	++i;
+// 	// }
+// 	// char*** quadruple = (char***)malloc(sizeof(char**)*lines);
+// 	// for(i = 0; i < lines; i++){
+// 	// 	quadruple[i] = (char**)malloc(sizeof(char**)*4);
+// 	// 	for(j = 0; j < 4; ++j){
+// 	// 		quadruple[i][j] = (char*)malloc(sizeof(char)*8);
+// 	// 	}
+// 	// }
+// }
 #endif

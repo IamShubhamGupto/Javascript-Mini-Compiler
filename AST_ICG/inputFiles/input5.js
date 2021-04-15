@@ -1,5 +1,5 @@
 var r = 3 + 4 * 5;
-var r = 4;
+r = 4;
 var strval = "this is a string";
 var t = 5;
 var y = 6 + 7;

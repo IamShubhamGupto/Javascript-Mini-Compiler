@@ -32,8 +32,7 @@ else				{return T_ELSE;}
 in					{return T_IN;}
 let					{return T_LET;}
 while 				{return T_WHILE;};
-for					{return T_FOR;}
-break|case|catch|continue|debugger|default|delete|do|else|finally|for|while|function|if|in|instanceof|new|return|switch|this|throw|try|typeof|var|void|while|with		  {return T_KEY;}
+break|case|catch|continue|debugger|default|delete|do|else|finally|function|if|in|instanceof|new|return|switch|this|throw|try|typeof|var|void|with		  {return T_KEY;}
 ([a-zA-Z]|\_)([a-zA-Z0-9]|\_)* 		{ygbl=strdup(yytext);return T_ID;}
 [0-9]+(\.[0-9]+)?(E[-+]?[0-9]+)? 	{mkentr(2,yytext,0);return T_NUM;}
 

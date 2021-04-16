@@ -4,11 +4,6 @@
 	#include <stdlib.h>
 	#define DEBUG_1 1
 	int yylex();
-	char op[100][4];
-	char arg1[100][16];
-	char arg2[100][16];
-	char res[100][16];
-	int lines = 0;
 %}
 
 %union
@@ -34,7 +29,7 @@
 	} ls;
 }
 
-%type<stt> seq statement for if while
+%type<stt> seq statement if while
 %type<eq> expr unit defn anyopl anyoph rhsl rhsh 
 %type<ls> list
 %type<dt> lhs lhsv edt
@@ -51,15 +46,11 @@ start:
 		fprintf(f,"%s",$1.code);
 		fclose(f);
 		// generate_quads($1.code);
-		FILE *f2=fopen("quads.txt","w");
 		printf("\n\nQuadruples\n\n");
 		printf("op\t\targ1\t\targ2\t\tres\n");
 
-		for(int i = 0; i < lines; ++i){
-			printf("%s\t%s\t%s\t%s\n",op[i],arg1[i],arg2[i],res[i]);
-			fprintf(f,"%s\t%s\t%s\t%s\n",op[i],arg1[i],arg2[i],res[i]);
-		}
-		fclose(f2);
+		generate_quads();
+		
 	};
 
 edt: ;
@@ -124,12 +115,6 @@ statement:
 		$$.ast=$1.ast;
 	}
 	|
-	for 
-	{
-		$$.code=$1.code;
-		$$.ast=$1.ast;
-	}
-	|
 	if 
 	{
 		$$.code=$1.code;
@@ -182,20 +167,11 @@ expr:lhs eqb expr
 	char *a;
 	a=getname($1.dt[0]);
 	//printf("A ====== %s\n",a);
-	sprintf(bbuf,"\t%s = t%d;\n",a ,$3.idn);
-	if(DEBUG_1){
-		printf("reached here");
-	}
-	strcpy(op[lines], strdup("="));
-	char buffer[16];
-	sprintf(buffer, "t%d",$3.idn);
-	strcpy(arg1[lines], buffer);
-	strcpy(arg2[lines], strdup(" "));
-	strcpy(res[lines], strdup(a));
-	++lines;
+	sprintf(bbuf,"%s = t%d\n",a ,$3.idn);
+
 	$$.code=ap($3.code,strdup(bbuf));
 	$$.idn=$3.idn;
-	sprintf(bbuf,"\t%s = (",a);
+	sprintf(bbuf,"%s = (",a);
 	$$.ast=ap3(strdup(bbuf),$3.ast,strdup(")"));
 }
 |
@@ -211,7 +187,7 @@ rhsl {
 rhsl:rhsh anyopl rhsl 
 {
 	int k=tmp++;
-	sprintf(bbuf,"\tt%d = t%d %s t%d;\n",k,$1.idn,$2.code,$3.idn);
+	sprintf(bbuf,"t%d = t%d %s t%d\n",k,$1.idn,$2.code,$3.idn);
 	$$.code=ap3($1.code,$3.code,strdup(bbuf));
 	$$.idn=k;
 	$$.ast=ap3(ap3(strdup(" ("),$1.ast,strdup(") ")),$2.code,ap3(strdup(" ("),$3.ast,strdup(") ")));free($2.code);
@@ -227,7 +203,7 @@ rhsh
 rhsh:unit anyoph rhsh 
 {
 	int k=tmp++;
-	sprintf(bbuf,"\tt%d = t%d %s t%d;\n",k,$1.idn,$2.code,$3.idn);
+	sprintf(bbuf,"t%d = t%d %s t%d\n",k,$1.idn,$2.code,$3.idn);
 	$$.code=ap3($1.code,$3.code,strdup(bbuf));
 	$$.idn=k;
 	$$.ast=ap3(ap3(strdup(" ("),$1.ast,strdup(") ")),$2.code,ap3(strdup(" ("),$3.ast,strdup(") ")));free($2.code);
@@ -244,7 +220,7 @@ unit: lhsv
 {
 	char *a;
 	int k=tmp++;
-	sprintf(bbuf,"\tt%d = %s;\n",k,a=getname($1.dt[0]));
+	sprintf(bbuf,"t%d = %s\n",k,a=getname($1.dt[0]));
 	$$.code=strdup(bbuf);
 	$$.idn=k;$$.ast=strdup(a);
 }
@@ -253,7 +229,7 @@ T_OP4 lhsv |lhsv T_OP4|T_STR
 {
 	int k=tmp++;
 	add_type_name(ygbl, 1);
-	sprintf(bbuf,"\tt%d = %s;\n",k,yytext);
+	sprintf(bbuf,"t%d = %s\n",k,yytext);
 	$$.code=strdup(bbuf);
 	$$.idn=k;
 	$$.ast=strdup(yytext);
@@ -263,7 +239,7 @@ T_NUM
 {	
 	int k=tmp++;
 	add_type_name(ygbl, 0);
-	sprintf(bbuf,"\tt%d = %s;\n",k,yytext);
+	sprintf(bbuf,"t%d = %s\n",k,yytext);
 	$$.code=strdup(bbuf);
 	$$.idn=k;$$.ast=strdup(yytext);
 }
@@ -281,9 +257,9 @@ lhsv '[' expr ']'
 	char *a;
 	int k=tmp++;
 	$$.idn=tmp++;
-	sprintf(bbuf,"\tt%d = %s\nt%d=t%d[t%d];\n",k,a=getname($1.dt[0]),$$.idn,k,$3.idn);
+	sprintf(bbuf,"t%d = %s\nt%d=t%d[t%d];\n",k,a=getname($1.dt[0]),$$.idn,k,$3.idn);
 	$$.code=ap($3.code,strdup(bbuf));
-	sprintf(bbuf,"\t %s[",a);
+	sprintf(bbuf,"%s[",a);
 	$$.ast=ap3(strdup(bbuf),$3.ast,strdup("] "));
 };
 
@@ -291,7 +267,7 @@ func:lhsv '(' list ')';
 
 list: list ',' expr 
 {
-	sprintf(bbuf,"\tt%d[%d]=t%d;\n",$1.idn,$1.off+1,$3.idn);
+	sprintf(bbuf,"t%d[%d]=t%d\n",$1.idn,$1.off+1,$3.idn);
 	$$.code=ap3($1.code,$3.code,strdup(bbuf));
 	$$.off=$1.off+1;
 	$$.idn=$1.idn;
@@ -302,7 +278,7 @@ expr
 {
 	$$.idn=tmp++;
 	$$.off=0;
-	sprintf(bbuf,"\tt%d[%d]=t%d;\n",$$.idn,$$.off,$1.idn);
+	sprintf(bbuf,"t%d[%d]=t%d\n",$$.idn,$$.off,$1.idn);
 	$$.code=ap($1.code,strdup(bbuf));
 	$$.ast=$1.ast;
 }
@@ -319,26 +295,26 @@ vtail:lhs |lhs ',' vtail|lhs '=' expr|lhs '=' expr ',' vtail;
 
 varop:T_VAR|T_LET|;
 
-for: T_FOR edt 
-{
-	$2.dt[0]=lbl++;
-	$2.dt[1]=lbl++;
-} 
-'(' expr ';' expr ';' expr ')' statement 
-{
-	char* a;
-	char* b;
-	sprintf(bbuf,"label l%d :\n",$2.dt[0]);
-	a=ap3($5.code,strdup(bbuf),$7.code);
-	sprintf(bbuf,"\tiffalse t%d goto l%d;\n",$7.idn,$2.dt[1]);
-	b=ap3(strdup(bbuf),$11.code,$9.code);
-	sprintf(bbuf,"\tgoto l%d;\nlabel l%d :\n",$2.dt[0],$2.dt[1]);
-	$$.code=ap3(a,b,strdup(bbuf));
-	a=ap3(strdup("for ("),$5.ast,strdup(";"));
-	a=ap3(a,$7.ast,strdup(";"));
-	a=ap3(a,$9.ast,strdup(")"));
-	$$.ast=ap(a,$11.ast);
-};
+// for: T_FOR edt 
+// {
+// 	$2.dt[0]=lbl++;
+// 	$2.dt[1]=lbl++;
+// } 
+// '(' expr ';' expr ';' expr ')' statement 
+// {
+// 	char* a;
+// 	char* b;
+// 	sprintf(bbuf,"label l%d :\n",$2.dt[0]);
+// 	a=ap3($5.code,strdup(bbuf),$7.code);
+// 	sprintf(bbuf,"iffalse t%d goto l%d\n",$7.idn,$2.dt[1]);
+// 	b=ap3(strdup(bbuf),$11.code,$9.code);
+// 	sprintf(bbuf,"goto l%d\nlabel l%d\n",$2.dt[0],$2.dt[1]);
+// 	$$.code=ap3(a,b,strdup(bbuf));
+// 	a=ap3(strdup("for ("),$5.ast,strdup(";"));
+// 	a=ap3(a,$7.ast,strdup(";"));
+// 	a=ap3(a,$9.ast,strdup(")"));
+// 	$$.ast=ap(a,$11.ast);
+// };
 while: T_WHILE edt
 {
 	$2.dt[0]=lbl++;
@@ -349,11 +325,11 @@ while: T_WHILE edt
 	//fixed maybe
 	char* a;
 	char* b;
-	sprintf(bbuf,"label l%d :\n",$2.dt[0]);
+	sprintf(bbuf,"label l%d\n",$2.dt[0]);
 	a=ap(strdup(bbuf),$5.code);
-	sprintf(bbuf,"\tiffalse t%d goto l%d;\n",$5.idn,$2.dt[1]);
+	sprintf(bbuf,"iffalse t%d goto l%d\n",$5.idn,$2.dt[1]);
 	b=ap(strdup(bbuf),$7.code);
-	sprintf(bbuf,"\tgoto l%d;\nlabel l%d :\n",$2.dt[0],$2.dt[1]);
+	sprintf(bbuf,"goto l%d\nlabel l%d\n",$2.dt[0],$2.dt[1]);
 	$$.code=ap3(a,b,strdup(bbuf));
 	a=ap3(strdup("while ("),$5.ast,strdup(")"));
 	$$.ast=ap(a,$7.ast);
@@ -369,9 +345,9 @@ statement T_ELSE statement
 {
 	char* a;
 	char* b;
-	sprintf(bbuf,"\tiftrue t%d goto l%d;\n\tgoto l%d;\nlabel l%d :\n",$3.idn,$5.dt[0],$5.dt[1],$5.dt[0]);
+	sprintf(bbuf,"iftrue t%d goto l%d\ngoto l%d\nlabel l%d\n",$3.idn,$5.dt[0],$5.dt[1],$5.dt[0]);
 	a=ap3($3.code,strdup(bbuf),$7.code);
-	sprintf(bbuf,"\tgoto l%d;\nlabel l%d :\n",$5.dt[2],$5.dt[1]);
+	sprintf(bbuf,"goto l%d\nlabel l%d\n",$5.dt[2],$5.dt[1]);
 	b=ap(strdup(bbuf),$9.code);
 	sprintf(bbuf,"label l%d :\n",$5.dt[2]);
 	$$.code=ap3(a,b,strdup(bbuf));

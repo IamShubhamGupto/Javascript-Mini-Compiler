@@ -1,6 +1,6 @@
 #ifndef HEADER_H
 #define HEADER_H
-#define DEBUG 0
+#define DEBUG 1
 struct tentr{
 	int type;
 	int scope;
@@ -161,50 +161,87 @@ char* getsname(int s)
 	return "<sign>";
 }
 
-// void generate_quads(const char* tac_code){
+void generate_quads(){
+	FILE *f; f=fopen("icg.txt","r");
+	FILE *f2 = fopen("quads.txt","w");
+	if(f==NULL){
+		exit(EXIT_FAILURE);
+	}
 
-// 	char ignore[] = {'\t', ' ', '\n', ';', ':'};
-// 	char* op;
-// 	char* arg1;
-// 	char* arg2;
-// 	char* res;
-// 	int lines = 0;
+	fclose(f);
+	fclose(f2);
+}
+#if 0
+void generate_quads(char* tac_code){
+	char* lines = strtok(tac_code, "\n");
+	char* tokens;
+	int i;
+	int len;	
+	char op[100][16];
+	char arg1[100][16];
+	char arg2[100][16];
+	char res[100][16];
+	int lineno = 0;
+	while(lines != NULL){
+		if(DEBUG){
+			printf("line = %s\n", lines);
+		}
+		i = 0;
+		
+		char* line = strdup(lines);
+		len = strlen(line);
+		printf("line = %s\n",line);
+		tokens = strtok(line," ");
+		while(tokens != NULL){
+			if(len == 3){
+				if(i == 0){
+					strcpy(op[lineno], tokens);
+				}else if(i == 1){
+					strcpy(res[lineno], tokens);
+				}	
+			}else if(len == 4){
+				if(i == 0){
+					strcpy(res[lineno], tokens);
+				}else if(i == 1){
+					strcpy(op[lineno], tokens);
+				}else if(i == 2){
+					strcpy(arg1[lineno], tokens);
+				}
+			}else if(len == 5){
+				if(i == 0){
+					strcpy(op[lineno], tokens);
+				}else if(i == 1){
+					strcpy(arg1[lineno], tokens);
+				}else if(i == 3){
+					strcpy(arg1[lineno], tokens);
+				}
+			}else if(len == 6){
+				if(i == 0){
+					strcpy(res[lineno], tokens);
+				}else if(i == 2){
+					strcpy(arg1[lineno], tokens);
+				}else if(i == 3){
+					strcpy(op[lineno], tokens);
+				}else if(i == 4){
+					strcpy(res[lineno], tokens);
+				}
+			}	
+			++i;
+			tokens = strtok(NULL," ");
+		}
+		if(len == 3){
+			strcpy(arg1[lineno], strdup("NULL"));
+			strcpy(arg2[lineno], strdup("NULL"));
+		}else if(len == 5 || len == 4){
+			strcpy(arg2[lineno], strdup("NULL"));
+		}
+		lines = strtok(NULL,"\n");
+		++lineno;
+	}
 
-// 	int len = strlen(tac_code);
-// 	if(DEBUG){
-// 		printf("Length of code = %d\n",len);
-// 	}
-	
-// 	int i = 0;
-// 	int j = 0;
-// 	int first = 0;
-// 	int last = 0;
-// 	int flag = 0;
-// 	for(i = 0; i < len; ++i){
-// 		first = i;
-// 		flag = 0;
-// 		for(j = 0; < 5; ++j){
-// 			if(tac_code[i] == ignore[j]){
-// 				flag = 1;
-// 				break;
-// 			}
-// 		}
-// 		if(!flag){
-
-// 		}
-// 	}
-// 	// while(i < len){
-// 	// 	if(tac_code[i] == '\n'){
-// 	// 		++lines;
-// 	// 	}
-// 	// 	++i;
-// 	// }
-// 	// char*** quadruple = (char***)malloc(sizeof(char**)*lines);
-// 	// for(i = 0; i < lines; i++){
-// 	// 	quadruple[i] = (char**)malloc(sizeof(char**)*4);
-// 	// 	for(j = 0; j < 4; ++j){
-// 	// 		quadruple[i][j] = (char*)malloc(sizeof(char)*8);
-// 	// 	}
-// 	// }
-// }
+	for(i = 0; i < lineno; i++){
+		printf("%s\t\t%s\t\t%s\t\t%s\n", op[i],arg1[i],arg2[i],res[i]);
+	}
+}
+#endif
 #endif

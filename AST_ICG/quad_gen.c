@@ -35,6 +35,9 @@ void generate_quads(){
         i = 0;
         while(tokens != NULL){
             //printf("processing token %s, length %d\n",tokens, len);
+            if(tokens[strlen(tokens)-1] == '\n'){
+                tokens[strlen(tokens)-1] = '\0';
+            }
 			if(len == 2){
 				if(i == 0){
 					strcpy(op[lineno], strdup(tokens));
@@ -50,6 +53,7 @@ void generate_quads(){
 				}else if(i == 2){
 					strcpy(arg1[lineno], strdup(tokens));
 				}
+
 			}else if(len == 4){
 				if(i == 0){
 					strcpy(op[lineno], strdup(tokens));
@@ -58,6 +62,7 @@ void generate_quads(){
 				}else if(i == 3){
 					strcpy(res[lineno], strdup(tokens));
 				}
+
 			}else if(len == 5){
 				if(i == 0){
 					strcpy(res[lineno], strdup(tokens));
@@ -73,8 +78,8 @@ void generate_quads(){
 			tokens = strtok(NULL," ");
 		}
         if(len == 2){
-			strcpy(arg1[--lineno], strdup("NULL"));
-			strcpy(arg2[--lineno], strdup("NULL"));
+			strcpy(arg1[lineno], strdup("NULL"));
+			strcpy(arg2[lineno], strdup("NULL"));
 		}else if(len == 3 || len == 4){
 			strcpy(arg2[lineno], strdup("NULL"));
 		}
@@ -85,7 +90,7 @@ void generate_quads(){
 	printf("op\t\targ1\t\targ2\t\tres\n");
     for(i = 0; i < lineno; ++i){
         printf("%s\t\t%s\t\t%s\t\t%s\n",op[i],arg1[i],arg2[i],res[i]);
-		fprintf(f2,"%s\t\t%s\t\t%s\t\t%s\n",op[i],arg1[i],arg2[i],res[i]);
+		fprintf(f2,"%s %s %s %s\n",op[i],arg1[i],arg2[i],res[i]);
     }
 	fclose(f);
 	fclose(f2);

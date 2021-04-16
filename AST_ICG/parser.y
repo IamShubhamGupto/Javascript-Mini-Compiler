@@ -46,9 +46,6 @@ start:
 		fprintf(f,"%s",$1.code);
 		fclose(f);
 		// generate_quads($1.code);
-		printf("\n\nQuadruples\n\n");
-		printf("op\t\targ1\t\targ2\t\tres\n");
-
 		generate_quads();
 		
 	};

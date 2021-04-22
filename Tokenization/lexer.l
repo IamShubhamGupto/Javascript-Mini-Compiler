@@ -5,15 +5,19 @@
 	void yyerror(const char *);
 	void addTokenToFile(const char *t, const char *s);
 	
-	int scope[100]={0},stop=1,sid=1, elno=1;
+	int scope[100]={0};
+	int stop=1;
+	int sid=1;
+	int elno=1;
 
-	char *indentifier;
-	#include<string.h>
-	#include"stbls.h"
-	#include"y.tab.h"
+	char *identifier;
+	#include <string.h>
+	#include "header.h"
+	#include "y.tab.h"
 
 %}
-
+%option nounput
+%option noinput
 %%
 
 \/\*([^*]|\*[^/])*\*\/			;
@@ -24,12 +28,11 @@ if					{addTokenToFile("Keyword",yytext);return T_IF; }
 else				{addTokenToFile("Keyword",yytext);return T_ELSE;}
 in					{addTokenToFile("Keyword",yytext);return T_IN;}
 let					{addTokenToFile("Keyword",yytext);return T_LET;}
-for					{addTokenToFile("Keyword",yytext);return T_FOR;}
 while					{addTokenToFile("Keyword",yytext);return T_WHILE;}
 console.log			{addTokenToFile("Print", yytext);return T_CONSOLE;}
 document.write		{addTokenToFile("Print", yytext);return T_DOCUMENT;}
 break|case|catch|continue|debugger|default|delete|do|else|finally|for|function|if|in|instanceof|new|return|switch|this|throw|try|typeof|var|void|with|while				{addTokenToFile("Keyword", yytext);return T_KEY;}
-([a-zA-Z]|\_)([a-zA-Z0-9]|\_)* 		{indentifier=strdup(yytext);addTokenToFile("Identifer", yytext);return T_ID;}
+([a-zA-Z]|\_)([a-zA-Z0-9]|\_)* 		{identifier=strdup(yytext);addTokenToFile("Identifer", yytext);return T_ID;}
 [0-9]+(\.[0-9]+)?(E[-+]?[0-9]+)? 	{mkentr(2,yytext,0);addTokenToFile("Number", yytext);return T_NUM;}
 
 [\[\(\{]			{addTokenToFile("Open Brackets", yytext); return yytext[0];}
@@ -90,6 +93,3 @@ int main(int argc, char *argv[]){
 	printall();
 	return 0;
 }
-
-
-

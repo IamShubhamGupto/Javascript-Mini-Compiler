@@ -1,5 +1,5 @@
 *.out
-tokens.txt
+*.txt
 y.tab.c
 y.tab.h
 lex.yy.c

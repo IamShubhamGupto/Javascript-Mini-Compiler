@@ -29,14 +29,13 @@
 	} ls;
 }
 
-%type<stt> seq statement if while
-%type<eq> expr unit defn anyopl anyoph rhsl rhsh 
+%type<stt> seq statement if while doc con
+%type<eq> expr unit defn anyopl anyoph rhsl rhsh
 %type<ls> list
 %type<dt> lhs lhsv edt
-%token T_VAR T_DEF T_KEY T_ID T_NUM T_LBR T_RBR T_STR T_SHA T_LCG T_LOP T_OP1 T_OP2 T_OP3 T_OP4 T_FOR T_WHILE T_IF T_ELSE T_IN T_LET
+%token T_VAR T_DEF T_KEY T_ID T_NUM T_LBR T_RBR T_STR T_SHA T_LCG T_LOP T_OP1 T_OP2 T_OP3 T_OP4 T_FOR T_WHILE T_IF T_ELSE T_IN T_LET T_CONSOLE T_DOCUMENT
 %start start
-%left '+' '-'
-%left '*' '/'
+
 %%
 start:
 	seq
@@ -124,6 +123,19 @@ statement:
 		$$.ast=$1.ast;
 	}
 	|
+	con 
+	{
+		//printf("works till here\n");
+		$$.code=$1.code;
+		$$.ast=$1.ast;
+	}
+	|
+	doc 
+	{
+		$$.code=$1.code;
+		$$.ast=$1.ast;	
+	}
+	|
 	'{'
 		{scs[stop++]=sid++;} 
 		seq 
@@ -142,13 +154,13 @@ statement:
 
 lhs:T_ID 
 {
-	int v=mkentr(0,ygbl,scs[stop-1]);
+	int v=mkentr(0,identifier,scs[stop-1]);
 	$$.dt[0]=v;
 };
 
 lhsv:T_ID 
 {
-	int v=chkentr(ygbl);
+	int v=chkentr(identifier);
 	if(v==-1)
 	{
 		printf("variable not found\n");
@@ -178,8 +190,6 @@ rhsl {
 	$$.ast=$1.ast;
 }
 ;
-
-
 
 rhsl:rhsh anyopl rhsl 
 {
@@ -215,17 +225,18 @@ unit
 
 unit: lhsv 
 {
-	char *a;
+	char *a=getname($1.dt[0]);
 	int k=tmp++;
-	sprintf(bbuf,"t%d = %s\n",k,a=getname($1.dt[0]));
+	sprintf(bbuf,"t%d = %s\n",k,a);
 	$$.code=strdup(bbuf);
-	$$.idn=k;$$.ast=strdup(a);
+	$$.idn=k;
+	$$.ast=strdup(a);
 }
 |	
 T_OP4 lhsv |lhsv T_OP4|T_STR 
 {
 	int k=tmp++;
-	add_type_name(ygbl, 1);
+	add_type_name(identifier, 1);
 	sprintf(bbuf,"t%d = %s\n",k,yytext);
 	$$.code=strdup(bbuf);
 	$$.idn=k;
@@ -235,7 +246,7 @@ T_OP4 lhsv |lhsv T_OP4|T_STR
 T_NUM 
 {	
 	int k=tmp++;
-	add_type_name(ygbl, 0);
+	add_type_name(identifier, 0);
 	sprintf(bbuf,"t%d = %s\n",k,yytext);
 	$$.code=strdup(bbuf);
 	$$.idn=k;$$.ast=strdup(yytext);
@@ -245,7 +256,7 @@ T_NUM
 {
 	$$.code=$2.code;
 	$$.idn=$2.idn;
-	add_type_name(ygbl, 2);
+	add_type_name(identifier, 2);
 	$$.ast=ap3(strdup(" ["),$2.ast,strdup("] "));
 }
 |
@@ -292,26 +303,6 @@ vtail:lhs |lhs ',' vtail|lhs '=' expr|lhs '=' expr ',' vtail;
 
 varop:T_VAR|T_LET|;
 
-// for: T_FOR edt 
-// {
-// 	$2.dt[0]=lbl++;
-// 	$2.dt[1]=lbl++;
-// } 
-// '(' expr ';' expr ';' expr ')' statement 
-// {
-// 	char* a;
-// 	char* b;
-// 	sprintf(bbuf,"label l%d :\n",$2.dt[0]);
-// 	a=ap3($5.code,strdup(bbuf),$7.code);
-// 	sprintf(bbuf,"iffalse t%d goto l%d\n",$7.idn,$2.dt[1]);
-// 	b=ap3(strdup(bbuf),$11.code,$9.code);
-// 	sprintf(bbuf,"goto l%d\nlabel l%d\n",$2.dt[0],$2.dt[1]);
-// 	$$.code=ap3(a,b,strdup(bbuf));
-// 	a=ap3(strdup("for ("),$5.ast,strdup(";"));
-// 	a=ap3(a,$7.ast,strdup(";"));
-// 	a=ap3(a,$9.ast,strdup(")"));
-// 	$$.ast=ap(a,$11.ast);
-// };
 while: T_WHILE edt
 {
 	$2.dt[0]=lbl++;
@@ -331,7 +322,28 @@ while: T_WHILE edt
 	a=ap3(strdup("while ("),$5.ast,strdup(")"));
 	$$.ast=ap(a,$7.ast);
 };
+con: T_CONSOLE '(' expr ')' adlm
+{
+	//printf("found console.log %s\n",$3.ast);
+	char* a;
+	//char* b;
+	sprintf(bbuf , "print %s\n",$3.ast);
+	a = ap3(strdup("console.log("),$3.ast, strdup(")"));
+	//printf("made it here\n");
+	$$.code = bbuf;
+	$$.ast = a;
+};
 
+doc: T_DOCUMENT '(' expr ')' adlm
+{
+	char* a;
+	//char* b;
+	sprintf(bbuf , "print %s\n",$3.ast);
+	a = ap3(strdup("document.write("),$3.ast, strdup(")"));
+	//printf("made it here\n");
+	$$.code = bbuf;
+	$$.ast = a;
+};
 if : T_IF '('expr')' edt 
 {
 	$5.dt[0]=lbl++;
@@ -346,7 +358,7 @@ statement T_ELSE statement
 	a=ap3($3.code,strdup(bbuf),$7.code);
 	sprintf(bbuf,"goto l%d\nlabel l%d\n",$5.dt[2],$5.dt[1]);
 	b=ap(strdup(bbuf),$9.code);
-	sprintf(bbuf,"label l%d :\n",$5.dt[2]);
+	sprintf(bbuf,"label l%d\n",$5.dt[2]);
 	$$.code=ap3(a,b,strdup(bbuf));
 	a=ap3(strdup("if("),$3.ast,strdup(")"));
 	a=ap3(a,$7.ast,strdup(" else "));

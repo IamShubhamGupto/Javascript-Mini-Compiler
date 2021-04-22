@@ -1,6 +1,6 @@
 #ifndef HEADER_H
 #define HEADER_H
-#define DEBUG 1
+#define DEBUG 0
 struct tentr{
 	int type;
 	int scope;
@@ -99,7 +99,7 @@ int chkentr(const char *d)
 		}
 	}
 		
-	printf("Error in line %d, %s not found\n", elno,d);
+	printf("[chkentr]Error in line %d, %s not found\n", elno,d);
 	if(DEBUG)
 	{
 		printf("chkentr exited\n");
@@ -120,7 +120,7 @@ void add_type_name(const char *d, int type)
 			}
 		}
 		
-	printf("Error in line %d, %s not found\n", elno,d);
+	printf("[add_type_name]Error in line %d, %s not found\n", elno,d);
 }
 
 //more string functions
@@ -180,10 +180,28 @@ void generate_quads(){
     int i;
     while(getline(&line, &lent, f) != -1) {
         char line_copy[100];
+		//printf("line ==== %s\n",line);
         strcpy(line_copy,line);
         t_count = strtok(line_copy," ");
         len = 0;
 
+		if(strcmp(t_count,"print") == 0){
+			printf("print found %s %s\n", t_count, line);
+			strcpy(op[lineno], strdup(t_count));
+			strcpy(res[lineno], strdup("NULL"));
+			strcpy(arg2[lineno], strdup("NULL"));
+			char print_this[32];
+			if(line[strlen(line)-1] == '\n'){
+                line[strlen(line)-1] = '\0';
+            }
+			for(int iter = 5; iter < strlen(line); ++iter){
+				print_this[iter-5] = line[iter];
+			}
+			strcpy(arg1[lineno], strdup(print_this));
+			++lineno;
+			continue;
+		}
+		printf("going here\n");
         //count number of tokens
         while(t_count != NULL){
             ++len;
@@ -192,6 +210,7 @@ void generate_quads(){
         }
         tokens = strtok(line," ");
         i = 0;
+		
         while(tokens != NULL){
             //printf("processing token %s, length %d\n",tokens, len);
             if(tokens[strlen(tokens)-1] == '\n'){

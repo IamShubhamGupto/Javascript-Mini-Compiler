@@ -11,7 +11,7 @@
 	int elno=1;
 	int lbl=0;
 	int tmp=0;
-	char *ygbl;
+	char *identifier;
 	char bbuf[1000];
 	char ysign[10];
 
@@ -32,8 +32,10 @@ else				{return T_ELSE;}
 in					{return T_IN;}
 let					{return T_LET;}
 while 				{return T_WHILE;};
+console.log			{return T_CONSOLE;}
+document.write		{return T_DOCUMENT;}
 break|case|catch|continue|debugger|default|delete|do|else|finally|function|if|in|instanceof|new|return|switch|this|throw|try|typeof|var|void|with		  {return T_KEY;}
-([a-zA-Z]|\_)([a-zA-Z0-9]|\_)* 		{ygbl=strdup(yytext);return T_ID;}
+([a-zA-Z]|\_)([a-zA-Z0-9]|\_)* 		{identifier=strdup(yytext);return T_ID;}
 [0-9]+(\.[0-9]+)?(E[-+]?[0-9]+)? 	{mkentr(2,yytext,0);return T_NUM;}
 
 [\[\(\{]			{return yytext[0];}
@@ -80,7 +82,7 @@ void addTokenToFile(const char *t, const char *s){
 
 void yyerror(const char *a)
 {
-	printf("\nError in line %d, %s\n", elno,a);
+	printf("[yyerror]\nError in line %d, %s\n", elno,a);
 	return;
 }
 int yywrap(void){

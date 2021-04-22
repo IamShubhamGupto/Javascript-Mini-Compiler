@@ -40,6 +40,7 @@ void generate_quads(){
             }
 			if(len == 2){
 				if(i == 0){
+					//if(strcmp(tokens,""))
 					strcpy(op[lineno], strdup(tokens));
 				}else if(i == 1){
 					strcpy(res[lineno], strdup(tokens));

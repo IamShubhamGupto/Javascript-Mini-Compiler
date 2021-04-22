@@ -186,7 +186,7 @@ void generate_quads(){
         len = 0;
 
 		if(strcmp(t_count,"print") == 0){
-			printf("print found %s %s\n", t_count, line);
+			//printf("print found %s %s\n", t_count, line);
 			strcpy(op[lineno], strdup(t_count));
 			strcpy(res[lineno], strdup("NULL"));
 			strcpy(arg2[lineno], strdup("NULL"));
@@ -201,7 +201,7 @@ void generate_quads(){
 			++lineno;
 			continue;
 		}
-		printf("going here\n");
+		//printf("going here\n");
         //count number of tokens
         while(t_count != NULL){
             ++len;

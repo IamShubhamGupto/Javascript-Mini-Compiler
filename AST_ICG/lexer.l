@@ -82,7 +82,7 @@ void addTokenToFile(const char *t, const char *s){
 
 void yyerror(const char *a)
 {
-	printf("[yyerror]\nError in line %d, %s\n", elno,a);
+	printf("\nError in line %d, %s\n", elno,a);
 	return;
 }
 int yywrap(void){

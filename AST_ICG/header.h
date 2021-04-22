@@ -99,7 +99,7 @@ int chkentr(const char *d)
 		}
 	}
 		
-	printf("[chkentr]Error in line %d, %s not found\n", elno,d);
+	printf("Error in line %d, %s not found\n", elno,d);
 	if(DEBUG)
 	{
 		printf("chkentr exited\n");
@@ -120,7 +120,7 @@ void add_type_name(const char *d, int type)
 			}
 		}
 		
-	printf("[add_type_name]Error in line %d, %s not found\n", elno,d);
+	printf("Error in line %d, %s not found\n", elno,d);
 }
 
 //more string functions

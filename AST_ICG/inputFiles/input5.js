@@ -1,10 +1,10 @@
-var r = 3 + 4 * 5;
+r = 3 + 4 * 5;
 r = 4;
-var strval = "this is a string";
-var t = 5;
-var y = 6 + 7;
-var a = 2;
-var w = 0;
+strval = "this is a string";
+t = 5;
+y = 6 + 7;
+a = 2;
+w = 0;
 while (a < 5) {
 	if (2 + 3) {
 		w = 3;
@@ -12,9 +12,9 @@ while (a < 5) {
 	else {
 		w = 4;
 	}
-	var h = 5;
+	h = 5;
 	t = t + 1;
-	var k = 0;
+	k = 0;
 	while (k < 10) {
 		o = o + 1;
 		if (y == 10) {

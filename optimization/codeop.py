@@ -1,4 +1,5 @@
-f = open("quads.txt", "r")
+filepath = input("Enter path to input TAC file")
+f = open(filepath, "r")
 
 
 list_of_lines = f.readlines()
@@ -8,6 +9,10 @@ print("Quadruple form after Constant Folding,constant propagation and copy propa
 print("-------------------------------------")
 for i in list_of_lines:
     i = i.strip("\n")
+    # if(i[0])
+    # if(i[:5] == "print"):
+    #     op = i[:5]
+    #     arg1 = i[5:]
     op, arg1, arg2, res = i.split()
     if(op in ["+", "-", "*", "/", "<", ">", "<=", ">=", "==", "!="]):
         # constant folding
@@ -57,10 +62,14 @@ for i in list_of_lines:
                 arg2Res = str(dictValues[arg2])
                 flag2 = 1
             if(flag1 == 1 and flag2 == 1):
-                result = eval(arg1Res+op+arg2Res)
-                dictValues[res] = result
-                print("=", result, "NULL", res)
-                constantFoldedList.append(["=", result, "NULL", res])
+                if(arg1Res.isdigit() & arg2Res.isdigit()):
+                    result = eval(arg1Res+op+arg2Res)
+                    dictValues[res] = result
+                    print("=", result, "NULL", res)
+                    constantFoldedList.append(["=", result, "NULL", res])
+                else:
+                    print(op, arg1Res, arg2Res, res)
+
             else:
                 print(op, arg1Res, arg2Res, res)
                 constantFoldedList.append([op, arg1Res, arg2Res, res])

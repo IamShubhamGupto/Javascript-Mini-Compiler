@@ -8,4 +8,4 @@ else {
 	a = 100;
 }
 
-console.log("Hello world\n");
+// console.log("Hello world\n");
